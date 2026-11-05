@@ -53,7 +53,7 @@ const push = (country: string, region: string, city: string, zip: string, isp: s
     speed: 80 + rnd(900), type, protocol: rnd(4) === 0 ? "TCP" : "UDP", price: type === "Mobile" ? 2.03 : 2.7,
   });
 };
-for (const [state, city, zip] of US) for (let i = 0; i < 6; i++) push("US", state, city, zip, US_ISP[rnd(US_ISP.length)]);
-for (const [c, region, city, zip, isps] of INTL) for (let i = 0; i < 5; i++) push(c, region, city, zip, isps[rnd(isps.length)]);
+for (const [state, city, zip] of US) for (let i = 0; i < 6; i++) push("US", state, city, zip, US_ISP[rnd(US_ISP.length)]!);
+for (const [c, region, city, zip, isps] of INTL) for (let i = 0; i < 5; i++) push(c, region, city, zip, isps[rnd(isps.length)]!);
 
 export const MOCK_PROXIES = out;
