@@ -57,8 +57,8 @@ function Shop() {
             {list.map((p) => (
               <tr key={p.id} className="border-b border-border">
                 <td className="px-3 py-4 font-bold">{p.ip}</td>
-                <td className="px-3">{p.country}</td><td className="px-3">{p.city}</td><td className="px-3">{p.region}</td>
-                <td className="px-3">{p.isp}</td><td className="px-3">{p.zip}</td><td className="px-3">{p.speed} Mbps</td>
+                <td className="px-3">{p.country}</td><td className="whitespace-normal px-3">{p.city}</td><td className="px-3">{p.region}</td>
+                <td className="min-w-[150px] whitespace-normal px-3">{p.isp}</td><td className="px-3">{p.zip}</td><td className="px-3">{p.speed} Mbps</td>
                 <td className="px-3">{p.type}</td><td className="px-3">{p.protocol}</td>
                 <td className="px-3">
                   <button onClick={() => toast.info("Purchasing opens once the proxy provider is connected.")}
