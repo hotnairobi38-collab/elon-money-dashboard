@@ -50,17 +50,17 @@ function Shop() {
       <div className="overflow-x-auto rounded-xl">
         <table className="w-full whitespace-nowrap text-sm">
           <thead className="bg-muted text-left text-xs font-bold uppercase text-muted-foreground">
-            <tr>{cols.map((c) => <th key={c} className="px-5 py-3">{c}</th>)}</tr>
+            <tr>{cols.map((c) => <th key={c} className="px-3 py-3">{c}</th>)}</tr>
           </thead>
           <tbody>
             {list.length === 0 && <tr><td colSpan={cols.length} className="px-5 py-8 text-center text-muted-foreground">No proxies match your search.</td></tr>}
             {list.map((p) => (
               <tr key={p.id} className="border-b border-border">
-                <td className="px-5 py-4 font-bold">{p.ip}</td>
-                <td className="px-5">{p.country}</td><td className="px-5">{p.city}</td><td className="px-5">{p.region}</td>
-                <td className="px-5">{p.isp}</td><td className="px-5">{p.zip}</td><td className="px-5">{p.speed} Mbps</td>
-                <td className="px-5">{p.type}</td><td className="px-5">{p.protocol}</td>
-                <td className="px-5">
+                <td className="px-3 py-4 font-bold">{p.ip}</td>
+                <td className="px-3">{p.country}</td><td className="px-3">{p.city}</td><td className="px-3">{p.region}</td>
+                <td className="px-3">{p.isp}</td><td className="px-3">{p.zip}</td><td className="px-3">{p.speed} Mbps</td>
+                <td className="px-3">{p.type}</td><td className="px-3">{p.protocol}</td>
+                <td className="px-3">
                   <button onClick={() => toast.info("Purchasing opens once the proxy provider is connected.")}
                     className="flex items-center gap-2 rounded-md bg-success px-4 py-2 font-bold text-success-foreground hover:opacity-90">
                     <ShoppingCart className="h-4 w-4" />${p.price.toFixed(2)}
