@@ -2,7 +2,8 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { meQuery, depositsQuery } from "@/lib/queries";
+import { meQuery, depositsQuery, walletsQuery } from "@/lib/queries";
+import { WalletEditor } from "@/components/WalletEditor";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   loader: async ({ context }) => {
     const me = await context.queryClient.ensureQueryData(meQuery);
     if (!me.isAdmin) throw redirect({ to: "/dashboard" });
-    await context.queryClient.ensureQueryData(depositsQuery(true));
+    await Promise.all([context.queryClient.ensureQueryData(depositsQuery(true)), context.queryClient.ensureQueryData(walletsQuery)]);
   },
   component: Admin,
 });
@@ -34,7 +35,8 @@ function Admin() {
 
   return (
     <div>
-      <main>
+      <main className="space-y-6">
+        <WalletEditor />
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <h1 className="text-lg font-bold text-foreground">Deposits</h1>
           {deposits.length === 0 ? <p className="mt-2 text-sm text-muted-foreground">No deposits yet.</p> : (
