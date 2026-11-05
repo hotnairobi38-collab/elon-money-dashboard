@@ -2,7 +2,6 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ShopHeader } from "@/components/ShopHeader";
 import { meQuery, depositsQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -23,8 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function Admin() {
-  const { data: me } = useSuspenseQuery(meQuery);
-  const { data: deposits } = useSuspenseQuery(depositsQuery(true));
+    const { data: deposits } = useSuspenseQuery(depositsQuery(true));
   const qc = useQueryClient();
 
   async function review(id: string, approve: boolean) {
@@ -35,9 +33,8 @@ function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <ShopHeader username={me.username} balance={me.balance} isAdmin />
-      <main className="mx-auto max-w-5xl px-4 py-8">
+    <div>
+      <main>
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
           <h1 className="text-lg font-bold text-foreground">Deposits</h1>
           {deposits.length === 0 ? <p className="mt-2 text-sm text-muted-foreground">No deposits yet.</p> : (
