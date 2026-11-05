@@ -8,6 +8,13 @@
       "when": 1793855659591,
       "tag": "0000_shop_core",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793856294455,
+      "tag": "0001_wallets",
+      "breakpoints": true
     }
   ]
 }

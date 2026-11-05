@@ -83,6 +83,27 @@ export type Database = {
         }
         Relationships: []
       }
+      wallets: {
+        Row: {
+          address: string
+          confirmations: number
+          currency: string
+          min_usd: number
+        }
+        Insert: {
+          address?: string
+          confirmations?: number
+          currency: string
+          min_usd?: number
+        }
+        Update: {
+          address?: string
+          confirmations?: number
+          currency?: string
+          min_usd?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
