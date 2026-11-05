@@ -29,7 +29,7 @@ function Admin() {
 
   async function review(id: string, approve: boolean) {
     const { error } = await supabase.rpc("review_deposit", { _id: id, _approve: approve });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(approve ? "Approved — balance added" : "Rejected");
     qc.invalidateQueries();
   }

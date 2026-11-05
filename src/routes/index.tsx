@@ -34,17 +34,17 @@ function Index() {
     const f = new FormData(e.currentTarget);
     const username = normalizeUsername(String(f.get("Username") ?? ""));
     const password = String(f.get("Password") ?? "");
-    if (!USERNAME_RE.test(username)) return toast.error("Username: 3-20 letters, numbers or _");
-    if (password.length < 6) return toast.error("Password must be at least 6 characters");
+    if (!USERNAME_RE.test(username)) { toast.error("Username: 3-20 letters, numbers or _"); return; }
+    if (password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
     setBusy(true);
     try {
       if (mode === "register") {
-        if (password !== String(f.get("Confirm password"))) return toast.error("Passwords don't match");
+        if (password !== String(f.get("Confirm password"))) { toast.error("Passwords don't match"); return; }
         const { error } = await supabase.auth.signUp({ email: usernameToEmail(username), password, options: { data: { username } } });
-        if (error) return toast.error(/registered/i.test(error.message) ? "Username already taken" : error.message);
+        if (error) { toast.error(/registered/i.test(error.message) ? "Username already taken" : error.message); return; }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: usernameToEmail(username), password });
-        if (error) return toast.error("Wrong username or password");
+        if (error) { toast.error("Wrong username or password"); return; }
       }
       navigate({ to: "/dashboard" });
     } finally { setBusy(false); }

@@ -37,11 +37,11 @@ function Dashboard() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const amt = Number(amount);
-    if (!(amt > 0) || !tx.trim()) return toast.error("Enter an amount and transaction ID");
+    if (!(amt > 0) || !tx.trim()) { toast.error("Enter an amount and transaction ID"); return; }
     setBusy(true);
     const { error } = await supabase.from("deposits").insert({ user_id: me.id, amount: amt, currency, tx_hash: tx.trim() });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Deposit submitted — waiting for confirmation");
     setAmount(""); setTx("");
     qc.invalidateQueries({ queryKey: ["deposits"] });
