@@ -44,6 +44,33 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          price: number
+          proxy: Json
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          price: number
+          proxy: Json
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          price?: number
+          proxy?: Json
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           balance: number
@@ -116,7 +143,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      place_order: { Args: { _price: number; _proxy: Json }; Returns: string }
       review_deposit: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
+      review_order: {
         Args: { _approve: boolean; _id: string }
         Returns: undefined
       }
