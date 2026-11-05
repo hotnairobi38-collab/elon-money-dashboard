@@ -1,5 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { USERNAME_RE, normalizeUsername, usernameToEmail } from "@/lib/auth";
 import { AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -20,6 +23,32 @@ const domains = ["https://sockgate.example/"];
 
 function Index() {
   const [mode, setMode] = useState<"login" | "register">("login");
+  const [busy, setBusy] = useState(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => { if (data.user) navigate({ to: "/dashboard" }); });
+  }, [navigate]);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const username = normalizeUsername(String(f.get("Username") ?? ""));
+    const password = String(f.get("Password") ?? "");
+    if (!USERNAME_RE.test(username)) return toast.error("Username: 3-20 letters, numbers or _");
+    if (password.length < 6) return toast.error("Password must be at least 6 characters");
+    setBusy(true);
+    try {
+      if (mode === "register") {
+        if (password !== String(f.get("Confirm password"))) return toast.error("Passwords don't match");
+        const { error } = await supabase.auth.signUp({ email: usernameToEmail(username), password, options: { data: { username } } });
+        if (error) return toast.error(/registered/i.test(error.message) ? "Username already taken" : error.message);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email: usernameToEmail(username), password });
+        if (error) return toast.error("Wrong username or password");
+      }
+      navigate({ to: "/dashboard" });
+    } finally { setBusy(false); }
+  }
   return (
     <div
       className="flex min-h-screen items-center justify-center bg-background px-4 py-16"
@@ -50,12 +79,13 @@ function Index() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="mt-8 space-y-6" onSubmit={onSubmit}>
           {["Username", "Password", ...(mode === "register" ? ["Confirm password"] : [])].map((l) => (
             <label key={l} className="block text-sm text-foreground/80">
               {l} <span className="text-destructive">*</span>
               <input
                 required
+                name={l}
                 type={l.toLowerCase().includes("password") ? "password" : "text"}
                 className="mt-2 block h-10 w-full rounded-md border border-input bg-background px-3 outline-none focus:ring-2 focus:ring-primary"
               />
@@ -66,12 +96,13 @@ function Index() {
               <input type="checkbox" className="h-4 w-4" /> Remember me
             </label>
           )}
-          <button className="h-9 w-full rounded-md bg-primary text-sm text-primary-foreground hover:opacity-90">
+          <button disabled={busy} className="h-9 w-full rounded-md bg-primary disabled:opacity-60 text-sm text-primary-foreground hover:opacity-90">
             {mode === "login" ? "Login" : "Create account"}
           </button>
         </form>
 
         <button
+          type="button"
           onClick={() => setMode(mode === "login" ? "register" : "login")}
           className="mt-8 text-primary hover:underline"
         >
