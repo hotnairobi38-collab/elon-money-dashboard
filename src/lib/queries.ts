@@ -28,3 +28,12 @@ export const depositsQuery = (all: boolean) =>
       return data;
     },
   });
+
+export const walletsQuery = queryOptions({
+  queryKey: ["wallets"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("wallets").select("*").order("currency");
+    if (error) throw error;
+    return data;
+  },
+});
