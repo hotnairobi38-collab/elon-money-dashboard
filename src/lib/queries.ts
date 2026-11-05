@@ -29,6 +29,15 @@ export const depositsQuery = (all: boolean) =>
     },
   });
 
+export const ordersQuery = queryOptions({
+  queryKey: ["orders"],
+  queryFn: async () => {
+    const { data, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  },
+});
+
 export const walletsQuery = queryOptions({
   queryKey: ["wallets"],
   queryFn: async () => {

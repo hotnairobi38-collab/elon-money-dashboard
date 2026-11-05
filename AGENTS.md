@@ -13,4 +13,4 @@
 
 - Login is username-only: auth uses a derived internal email (`src/lib/auth.ts`); never ask users for email. Why: owner chose username login.
 - The first account to sign up gets the admin role (signup trigger); roles live only in `user_roles`. Why: owner reviews deposits.
-- Balance changes only through the `review_deposit` database function. Why: clients must never write balances.
+- Balance changes only through security-definer DB functions (`review_deposit`, `place_order`, `review_order`). Why: clients must never write balances.
