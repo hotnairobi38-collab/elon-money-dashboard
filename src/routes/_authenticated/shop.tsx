@@ -1,11 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { MOCK_PROXIES, COUNTRIES, type Proxy } from "@/lib/mock-proxies";
-import { ordersQuery } from "@/lib/queries";
+import { meQuery, ordersQuery } from "@/lib/queries";
+import { Button } from "@/components/ui/button";
+import { MyOrders } from "@/components/MyOrders";
+import { addToCart, cartTotal, restoreCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/_authenticated/shop")({
   head: () => ({
@@ -17,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/shop")({
     ],
   }),
   component: Shop,
+  loader: async ({ context }) => { await Promise.all([context.queryClient.ensureQueryData(meQuery), context.queryClient.ensureQueryData(ordersQuery)]); },
 });
 
 const field = "mt-2 block h-10 w-full rounded-md border border-input bg-muted px-3 placeholder:text-muted-foreground";
@@ -25,47 +29,85 @@ const empty = { country: "Any", city: "", state: "", zip: "", isp: "", type: "An
 const PAGE = 50;
 
 function Shop() {
-  const [tab, setTab] = useState<"search" | "mine">("search");
+  const [tab, setTab] = useState<"search" | "cart" | "mine">("search");
+  const { data: me } = useSuspenseQuery(meQuery);
+  const [cart, setCart] = useState<Proxy[]>([]);
+  const [ready, setReady] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [requestId, setRequestId] = useState<string | null>(null);
+  const key = `sockgate-cart-${me.id}`;
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) ?? "null");
+      setCart(restoreCart(saved?.ids));
+      setRequestId(typeof saved?.requestId === "string" ? saved.requestId : null);
+    } catch { setCart([]); setRequestId(null); }
+    setReady(true);
+  }, [key]);
+  useEffect(() => {
+    if (ready) localStorage.setItem(key, JSON.stringify({ ids: cart.map((p) => p.id), requestId }));
+  }, [cart, requestId, ready, key]);
+  function add(p: Proxy) {
+    if (cart.some((x) => x.id === p.id)) { toast.info("Already in your cart"); return; }
+    setCart((items) => addToCart(items, p)); setRequestId(null);
+    toast.success("Added to cart");
+  }
+  async function checkout() {
+    if (busy || !cart.length) return;
+    setBusy(true);
+    const id = requestId ?? crypto.randomUUID();
+    setRequestId(id);
+    localStorage.setItem(key, JSON.stringify({ ids: cart.map((p) => p.id), requestId: id }));
+    try {
+      const { error } = await supabase.rpc("checkout_cart", { _items: cart, _request_id: id });
+      if (error) throw error;
+      setCart([]); setRequestId(null);
+      localStorage.removeItem(key);
+      await qc.invalidateQueries();
+      toast.success("Checkout complete — orders waiting for admin approval");
+      await navigate({ to: "/orders" });
+    } catch (error) { toast.error(error instanceof Error ? error.message : (error as { message?: string }).message ?? "Checkout failed"); }
+    finally { setBusy(false); }
+  }
   return (
     <div className="space-y-6">
       <div className="flex gap-3">
-        {(["search", "mine"] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
-            className={`rounded-md px-4 py-2 text-sm font-medium ${tab === t ? "bg-primary text-primary-foreground" : "border border-border"}`}>
-            {t === "search" ? "Search Socks5" : "My Socks5"}
-          </button>
+        {(["search", "cart", "mine"] as const).map((t) => (
+          <Button key={t} onClick={() => setTab(t)} variant={tab === t ? "default" : "outline"}>
+            {t === "search" ? "Search Socks5" : t === "cart" ? `Cart (${cart.length})` : "My Orders"}
+          </Button>
         ))}
       </div>
-      {tab === "search" ? <Search /> : <MyOrders />}
+      {tab === "search" ? <Search add={add} cart={cart} ready={ready} /> : tab === "mine" ? <MyOrders /> : <section className="space-y-4">
+        <h1 className="text-2xl font-bold">Cart</h1>
+        {!cart.length ? <p className="text-muted-foreground">Your cart is empty.</p> : <>
+          <div className="divide-y divide-border">{cart.map((p) => <div key={p.id} className="flex flex-wrap items-center gap-3 py-4">
+            <div className="min-w-0 flex-1"><p className="font-mono">{p.ip}</p><p className="text-sm text-muted-foreground">{p.city}, {p.region}, {p.country} · {p.type}</p></div>
+            <span>${p.price.toFixed(2)}</span>
+            <Button variant="ghost" size="icon" disabled={busy} title="Remove proxy" aria-label={`Remove ${p.ip}`} onClick={() => { setCart(cart.filter((x) => x.id !== p.id)); setRequestId(null); }}><Trash2 /></Button>
+          </div>)}</div>
+          <p className="font-bold">Total: ${cartTotal(cart).toFixed(2)}</p>
+          <p className="text-sm text-muted-foreground">Balance: ${me.balance.toFixed(2)} · Sample proxies only</p>
+          <Button disabled={busy} onClick={checkout}><ShoppingCart />{busy ? "Processing…" : `Checkout · $${cartTotal(cart).toFixed(2)}`}</Button>
+          {me.balance < cartTotal(cart) && <Button variant="outline" onClick={() => navigate({ to: "/add-balance" })}>Top up balance</Button>}
+        </>}
+      </section>}
     </div>
   );
 }
 
-function Search() {
-  const qc = useQueryClient();
+function Search({ add, cart, ready }: { add: (p: Proxy) => void; cart: Proxy[]; ready: boolean }) {
   const [draft, setDraft] = useState(empty);
   const [f, setF] = useState(empty);
   const [shown, setShown] = useState(PAGE);
-  const [buying, setBuying] = useState<string | null>(null);
   const has = (a: string, b: string) => a.toLowerCase().includes(b.trim().toLowerCase());
   const list = useMemo(() => MOCK_PROXIES.filter((p) =>
     (f.country === "Any" || p.country === f.country) &&
     has(p.city, f.city) && has(p.region, f.state) && p.zip.startsWith(f.zip.trim()) && has(p.isp, f.isp) &&
     (f.type === "Any" || p.type === f.type) && (f.protocol === "Any" || p.protocol === f.protocol)), [f]);
   const set = (k: keyof typeof empty) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setDraft({ ...draft, [k]: e.target.value });
-
-  async function buy(p: Proxy) {
-    if (!confirm(`Buy ${p.ip} (${p.city}, ${p.country}) for $${p.price.toFixed(2)}? The amount is taken from your balance.`)) return;
-    setBuying(p.id);
-    const { error } = await supabase.rpc("place_order", { _proxy: p, _price: p.price });
-    setBuying(null);
-    if (error) {
-      toast.error(error.message, error.message.includes("balance") ? { action: { label: "Top up", onClick: () => location.assign("/add-balance") } } : undefined);
-      return;
-    }
-    toast.success("Order placed — waiting for admin verification. See My Socks5.");
-    qc.invalidateQueries();
-  }
 
   return (
     <>
@@ -100,10 +142,10 @@ function Search() {
                 <td className="min-w-[150px] whitespace-normal px-3">{p.isp}</td><td className="px-3">{p.zip}</td><td className="px-3">{p.speed} Mbps</td>
                 <td className="px-3">{p.type}</td><td className="px-3">{p.protocol}</td>
                 <td className="px-3">
-                  <button disabled={buying === p.id} onClick={() => buy(p)}
+                  <Button disabled={!ready || cart.some((x) => x.id === p.id)} onClick={() => add(p)} aria-label={`Add ${p.ip} to cart`}
                     className="flex items-center gap-2 whitespace-nowrap rounded-md bg-success px-4 py-2 font-bold text-success-foreground hover:opacity-90 disabled:opacity-60">
-                    <ShoppingCart className="h-4 w-4" />${p.price.toFixed(2)}
-                  </button>
+                    <ShoppingCart className="h-4 w-4" />{cart.some((x) => x.id === p.id) ? "In cart" : `$${p.price.toFixed(2)}`}
+                  </Button>
                 </td>
               </tr>
             ))}
@@ -117,22 +159,3 @@ function Search() {
   );
 }
 
-function MyOrders() {
-  const { data, isLoading } = useQuery(ordersQuery);
-  if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
-  if (!data?.length) return <p className="text-muted-foreground">No orders yet. <Link to="/shop" className="text-primary">Buy a proxy</Link>.</p>;
-  return (
-    <div className="overflow-x-auto rounded-xl border border-border bg-card">
-      <table className="w-full text-sm">
-        <thead className="bg-muted text-left text-xs font-bold uppercase text-muted-foreground"><tr><th className="px-3 py-3">Date</th><th>Proxy</th><th>Location</th><th>Price</th><th>Status</th></tr></thead>
-        <tbody>{data.map((o) => { const p = o.proxy as unknown as Proxy; return (
-          <tr key={o.id} className="border-t border-border">
-            <td className="px-3 py-3">{new Date(o.created_at).toLocaleString()}</td>
-            <td className="font-mono">{p.ip}</td><td>{p.city}, {p.region}, {p.country}</td>
-            <td>${Number(o.price).toFixed(2)}</td>
-            <td className="capitalize">{o.status === "pending" ? "Waiting for verification" : o.status === "rejected" ? "Rejected (refunded)" : "Approved"}</td>
-          </tr>); })}</tbody>
-      </table>
-    </div>
-  );
-}
