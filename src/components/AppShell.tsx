@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { Home, Globe, Wallet, History, ShieldCheck, Plus, Menu, LogOut } from "lucide-react";
+import { Home, Globe, Wallet, History, ShieldCheck, Plus, Menu, LogOut, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { meQuery } from "@/lib/queries";
+import { meQuery, domainQuery } from "@/lib/queries";
 
 const item = "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/90 hover:bg-sidebar-accent";
 const active = { className: "bg-primary text-primary-foreground hover:bg-primary" };
@@ -52,6 +52,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <Section title="Purchase Socks5">
           <Link to="/shop" className={item} activeProps={active}><Globe className="h-4 w-4" />Socks5 Shop</Link>
+          <Link to="/orders" className={item} activeProps={active}><Package className="h-4 w-4" />My Orders</Link>
         </Section>
         <Section title="Account Management">
           <Link to="/add-balance" className={item} activeProps={active}><Wallet className="h-4 w-4" />Add Balance</Link>
@@ -71,11 +72,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 }
 
 export function NoteBox() {
+  const { data: domain } = useQuery(domainQuery);
   return (
     <div className="border-l-4 border-note-accent bg-note-accent/10 p-4 text-sm">
       <p className="text-lg font-medium text-note-accent">⚠ Note</p>
       <p className="mt-1">SockGate only uses this domain:</p>
-      <span className="mt-3 inline-block rounded border border-note-accent/50 bg-note-accent/20 px-3 py-1.5">https://sockgate.example/</span>
+      <span className="mt-3 inline-block max-w-full break-all rounded border border-note-accent/50 bg-note-accent/20 px-3 py-1.5">{domain ?? "https://sockgate.example/"}</span>
       <p className="mt-3">All other domains are fake. Use proxies only for lawful purposes.</p>
     </div>
   );
