@@ -11,6 +11,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { name: "description", content: "Your SockGate balance and orders." },
       { property: "og:title", content: "Dashboard — SockGate Proxy" },
       { property: "og:description", content: "Your SockGate balance and orders." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: async ({ context }) => { await Promise.all([context.queryClient.ensureQueryData(meQuery), context.queryClient.ensureQueryData(ordersQuery)]); },

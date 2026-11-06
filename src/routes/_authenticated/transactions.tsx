@@ -9,6 +9,8 @@ export const Route = createFileRoute("/_authenticated/transactions")({
       { name: "description", content: "Your SockGate deposits and their status." },
       { property: "og:title", content: "Transaction History — SockGate Proxy" },
       { property: "og:description", content: "Your SockGate deposits and their status." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: async ({ context }) => {

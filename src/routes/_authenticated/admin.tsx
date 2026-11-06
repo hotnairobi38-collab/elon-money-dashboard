@@ -13,6 +13,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Review customer crypto deposits." },
       { property: "og:title", content: "Admin — SockGate Proxy" },
       { property: "og:description", content: "Review customer crypto deposits." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: async ({ context }) => {

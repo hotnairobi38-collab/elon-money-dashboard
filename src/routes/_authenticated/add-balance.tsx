@@ -14,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/add-balance")({
       { name: "description", content: "Top up your SockGate balance with crypto." },
       { property: "og:title", content: "Topup — SockGate Proxy" },
       { property: "og:description", content: "Top up your SockGate balance with crypto." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: async ({ context }) => {

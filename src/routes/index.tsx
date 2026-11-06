@@ -72,7 +72,7 @@ function Index() {
           </p>
           <div className="mt-3 space-y-3">
             {domains.map((d) => (
-              <span key={d} className="inline-block border border-note-accent/50 bg-note-accent/20 px-2 py-1 text-xs text-primary-foreground">
+                <span key={d} className="inline-block max-w-full break-all border border-note-accent/50 bg-note-accent/20 px-2 py-1 text-xs text-primary-foreground">
                 {d}
               </span>
             ))}
