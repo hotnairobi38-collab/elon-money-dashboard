@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      checkouts: {
+        Row: {
+          created_at: string
+          id: string
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          total: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           amount: number
@@ -46,6 +67,7 @@ export type Database = {
       }
       orders: {
         Row: {
+          checkout_id: string | null
           created_at: string
           id: string
           price: number
@@ -54,6 +76,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          checkout_id?: string | null
           created_at?: string
           id?: string
           price: number
@@ -62,6 +85,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          checkout_id?: string | null
           created_at?: string
           id?: string
           price?: number
@@ -69,7 +93,15 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_checkout_id_fkey"
+            columns: ["checkout_id"]
+            isOneToOne: false
+            referencedRelation: "checkouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -89,6 +121,21 @@ export type Database = {
           created_at?: string
           id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: string
+          official_domain: string
+        }
+        Insert: {
+          id?: string
+          official_domain: string
+        }
+        Update: {
+          id?: string
+          official_domain?: string
         }
         Relationships: []
       }
@@ -136,6 +183,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      checkout_cart: {
+        Args: { _items: Json; _request_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

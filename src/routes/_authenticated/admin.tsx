@@ -2,8 +2,9 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { meQuery, depositsQuery, walletsQuery, ordersQuery } from "@/lib/queries";
+import { meQuery, depositsQuery, walletsQuery, ordersQuery, domainQuery } from "@/lib/queries";
 import { WalletEditor } from "@/components/WalletEditor";
+import { DomainEditor } from "@/components/DomainEditor";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -12,12 +13,14 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Review customer crypto deposits." },
       { property: "og:title", content: "Admin — SockGate Proxy" },
       { property: "og:description", content: "Review customer crypto deposits." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: async ({ context }) => {
     const me = await context.queryClient.ensureQueryData(meQuery);
     if (!me.isAdmin) throw redirect({ to: "/dashboard" });
-    await Promise.all([context.queryClient.ensureQueryData(depositsQuery(true)), context.queryClient.ensureQueryData(walletsQuery), context.queryClient.ensureQueryData(ordersQuery)]);
+    await Promise.all([context.queryClient.ensureQueryData(domainQuery), context.queryClient.ensureQueryData(depositsQuery(true)), context.queryClient.ensureQueryData(walletsQuery), context.queryClient.ensureQueryData(ordersQuery)]);
   },
   component: Admin,
 });
@@ -67,6 +70,7 @@ function Admin() {
   return (
     <div>
       <main className="space-y-6">
+        <DomainEditor />
         <OrdersReview />
         <WalletEditor />
         <div className="rounded-xl border border-border bg-card p-6 shadow-sm">

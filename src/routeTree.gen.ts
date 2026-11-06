@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAddBalanceRouteImport } from './routes/_authenticated/add-balance'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedShopRouteImport } from './routes/_authenticated/shop'
 import { Route as AuthenticatedTransactionsRouteImport } from './routes/_authenticated/transactions'
 
@@ -41,6 +42,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedShopRoute = AuthenticatedShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/add-balance': typeof AuthenticatedAddBalanceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/shop': typeof AuthenticatedShopRoute
   '/transactions': typeof AuthenticatedTransactionsRoute
 }
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/add-balance': typeof AuthenticatedAddBalanceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/shop': typeof AuthenticatedShopRoute
   '/transactions': typeof AuthenticatedTransactionsRoute
 }
@@ -76,15 +84,29 @@ export interface FileRoutesById {
   '/_authenticated/add-balance': typeof AuthenticatedAddBalanceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/orders': typeof AuthenticatedOrdersRoute
   '/_authenticated/shop': typeof AuthenticatedShopRoute
   '/_authenticated/transactions': typeof AuthenticatedTransactionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/add-balance' | '/admin' | '/dashboard' | '/shop' | '/transactions'
+    | '/'
+    | '/add-balance'
+    | '/admin'
+    | '/dashboard'
+    | '/orders'
+    | '/shop'
+    | '/transactions'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/add-balance' | '/admin' | '/dashboard' | '/shop' | '/transactions'
+  to:
+    | '/'
+    | '/add-balance'
+    | '/admin'
+    | '/dashboard'
+    | '/orders'
+    | '/shop'
+    | '/transactions'
   id:
     | '__root__'
     | '/'
@@ -92,6 +114,7 @@ export interface FileRouteTypes {
     | '/_authenticated/add-balance'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/orders'
     | '/_authenticated/shop'
     | '/_authenticated/transactions'
   fileRoutesById: FileRoutesById
@@ -138,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/shop': {
       id: '/_authenticated/shop'
       path: '/shop'
@@ -159,6 +189,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAddBalanceRoute: typeof AuthenticatedAddBalanceRoute
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedShopRoute: typeof AuthenticatedShopRoute
   AuthenticatedTransactionsRoute: typeof AuthenticatedTransactionsRoute
 }
@@ -167,6 +198,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAddBalanceRoute: AuthenticatedAddBalanceRoute,
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedShopRoute: AuthenticatedShopRoute,
   AuthenticatedTransactionsRoute: AuthenticatedTransactionsRoute,
 }

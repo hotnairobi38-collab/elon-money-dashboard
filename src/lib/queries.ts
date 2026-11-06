@@ -1,5 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getOfficialDomain } from "./site-settings.functions";
+
+export const domainQuery = queryOptions({ queryKey: ["official-domain"], queryFn: () => getOfficialDomain() });
 
 export const meQuery = queryOptions({
   queryKey: ["me"],

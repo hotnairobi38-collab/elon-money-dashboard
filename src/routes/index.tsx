@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { USERNAME_RE, normalizeUsername, usernameToEmail } from "@/lib/auth";
 import { AlertTriangle } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { domainQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,11 +19,12 @@ export const Route = createFileRoute("/")({
     ],
   }),
   component: Index,
+  loader: ({ context }) => context.queryClient.ensureQueryData(domainQuery),
 });
 
-const domains = ["https://sockgate.example/"];
-
 function Index() {
+  const { data: officialDomain } = useSuspenseQuery(domainQuery);
+  const domains = [officialDomain];
   const [mode, setMode] = useState<"login" | "register">("login");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
@@ -69,7 +72,7 @@ function Index() {
           </p>
           <div className="mt-3 space-y-3">
             {domains.map((d) => (
-              <span key={d} className="inline-block border border-note-accent/50 bg-note-accent/20 px-2 py-1 text-xs text-primary-foreground">
+                <span key={d} className="inline-block max-w-full break-all border border-note-accent/50 bg-note-accent/20 px-2 py-1 text-xs text-primary-foreground">
                 {d}
               </span>
             ))}

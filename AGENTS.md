@@ -13,4 +13,6 @@
 
 - Login is username-only: auth uses a derived internal email (`src/lib/auth.ts`); never ask users for email. Why: owner chose username login.
 - The first account to sign up gets the admin role (signup trigger); roles live only in `user_roles`. Why: owner reviews deposits.
-- Balance changes only through security-definer DB functions (`review_deposit`, `place_order`, `review_order`). Why: clients must never write balances.
+- Balance changes only through security-definer DB functions (`review_deposit`, `checkout_cart`, `review_order`). Checkout is atomic, idempotent, and enforces catalog prices server-side; never restore client-priced `place_order`. Why: clients must never write balances or choose prices.
+- Cart stores only sample IDs scoped to the signed-in user; orders have their own authenticated page and owner-filtered read path. Why: admin-wide reads must not leak into personal orders.
+- Official domain is public site settings, read through a public server function for SSR and editable only through admin RLS. Why: login and dashboard share one owner-controlled value.
