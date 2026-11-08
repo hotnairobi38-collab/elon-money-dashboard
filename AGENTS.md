@@ -16,3 +16,4 @@
 - Balance changes only through security-definer DB functions (`review_deposit`, `checkout_cart`, `review_order`). Checkout is atomic, idempotent, and enforces catalog prices server-side; never restore client-priced `place_order`. Why: clients must never write balances or choose prices.
 - Cart stores only sample IDs scoped to the signed-in user; orders have their own authenticated page and owner-filtered read path. Why: admin-wide reads must not leak into personal orders.
 - Official domain is public site settings, read through a public server function for SSR and editable only through admin RLS. Why: login and dashboard share one owner-controlled value.
+- Manual order delivery uses the admin-only `deliver_order` RPC to atomically approve and save details; orders remain read-only to clients with owner/admin RLS. Why: customers cannot change their credentials or fulfillment status.
