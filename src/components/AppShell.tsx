@@ -77,7 +77,7 @@ export function NoteBox() {
     <div className="border-l-4 border-note-accent bg-note-accent/10 p-4 text-sm">
       <p className="text-lg font-medium text-note-accent">⚠ Note</p>
       <p className="mt-1">SockGate only uses this domain:</p>
-      <span className="mt-3 inline-block max-w-full break-all rounded border border-note-accent/50 bg-note-accent/20 px-3 py-1.5">{domain ?? "https://sockgate.example/"}</span>
+      <span className="mt-3 inline-block max-w-full break-all rounded border border-note-accent/50 bg-note-accent/20 px-3 py-1.5">{domain ?? "https://deepshop.space/"}</span>
       <p className="mt-3">All other domains are fake. Use proxies only for lawful purposes.</p>
     </div>
   );
