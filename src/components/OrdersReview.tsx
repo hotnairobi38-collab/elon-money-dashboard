@@ -9,8 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
-type Order = (typeof ordersQuery extends { queryFn?: (...args: never[]) => infer R } ? Awaited<R> : never);
-
 export function OrdersReview() {
   const { data: orders } = useSuspenseQuery(ordersQuery);
   const qc = useQueryClient();
