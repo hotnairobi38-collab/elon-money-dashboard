@@ -17,5 +17,5 @@ export const getOfficialDomain = createServerFn({ method: "GET" }).handler(async
   });
   const { data, error } = await client.from("site_settings").select("official_domain").eq("id", "official_domain").maybeSingle();
   if (error) throw error;
-  return data?.official_domain ?? "https://sockgate.example/";
+  return data?.official_domain ?? "https://deepshop.space/";
 });
