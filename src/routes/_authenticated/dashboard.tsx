@@ -7,10 +7,10 @@ import { meQuery, ordersQuery } from "@/lib/queries";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — SockGate Proxy" },
-      { name: "description", content: "Your SockGate balance and orders." },
-      { property: "og:title", content: "Dashboard — SockGate Proxy" },
-      { property: "og:description", content: "Your SockGate balance and orders." },
+      { title: "Dashboard — DeepShop" },
+      { name: "description", content: "Your DeepShop balance and orders." },
+      { property: "og:title", content: "Dashboard — DeepShop" },
+      { property: "og:description", content: "Your DeepShop balance and orders." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

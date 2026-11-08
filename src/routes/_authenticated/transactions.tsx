@@ -5,10 +5,10 @@ import { meQuery, depositsQuery } from "@/lib/queries";
 export const Route = createFileRoute("/_authenticated/transactions")({
   head: () => ({
     meta: [
-      { title: "Transaction History — SockGate Proxy" },
-      { name: "description", content: "Your SockGate deposits and their status." },
-      { property: "og:title", content: "Transaction History — SockGate Proxy" },
-      { property: "og:description", content: "Your SockGate deposits and their status." },
+      { title: "Transaction History — DeepShop" },
+      { name: "description", content: "Your DeepShop deposits and their status." },
+      { property: "og:title", content: "Transaction History — DeepShop" },
+      { property: "og:description", content: "Your DeepShop deposits and their status." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

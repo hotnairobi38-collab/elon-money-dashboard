@@ -3,17 +3,17 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { USERNAME_RE, normalizeUsername, usernameToEmail } from "@/lib/auth";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Globe, ShieldCheck, User, Lock, Zap, Loader2 } from "lucide-react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { domainQuery } from "@/lib/queries";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SockGate Proxy — Login" },
-      { name: "description", content: "Sign in to SockGate to buy fast, reliable SOCKS5 proxies." },
-      { property: "og:title", content: "SockGate Proxy — Login" },
-      { property: "og:description", content: "Fast, reliable SOCKS5 proxies. Sign in to your account." },
+      { title: "DeepShop — Sign in" },
+      { name: "description", content: "Sign in to DeepShop to buy fast, reliable SOCKS5 proxies." },
+      { property: "og:title", content: "DeepShop — Sign in" },
+      { property: "og:description", content: "Fast, reliable SOCKS5 proxies. Sign in to your DeepShop account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -22,9 +22,32 @@ export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(domainQuery),
 });
 
+const perks = [
+  { icon: Globe, text: "SOCKS5 proxies in 20+ countries" },
+  { icon: Zap, text: "Instant delivery after approval" },
+  { icon: ShieldCheck, text: "Crypto top-ups, verified by hand" },
+];
+
+function Field({ label, name, type = "text", icon: Icon, autoComplete }: { label: string; name: string; type?: string; icon: typeof User; autoComplete?: string }) {
+  return (
+    <label className="block text-sm font-medium text-foreground/80">
+      {label} <span className="text-destructive">*</span>
+      <span className="relative mt-1.5 block">
+        <Icon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <input
+          required
+          name={name}
+          type={type}
+          autoComplete={autoComplete}
+          className="block h-11 w-full rounded-lg border border-input bg-background/60 pl-10 pr-3 text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/40"
+        />
+      </span>
+    </label>
+  );
+}
+
 function Index() {
   const { data: officialDomain } = useSuspenseQuery(domainQuery);
-  const domains = [officialDomain];
   const [mode, setMode] = useState<"login" | "register">("login");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
@@ -52,65 +75,78 @@ function Index() {
       navigate({ to: "/dashboard" });
     } finally { setBusy(false); }
   }
+
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-background px-4 py-16"
-      style={{ backgroundImage: "radial-gradient(ellipse at top, var(--glow), transparent 60%)" }}
+      className="dark flex min-h-screen items-center justify-center bg-background px-4 py-12 text-foreground"
+      style={{ backgroundImage: "radial-gradient(ellipse 80% 60% at 50% -10%, var(--glow), transparent 70%)" }}
     >
-      <div className="w-full max-w-[430px] rounded-xl border border-border bg-card p-8 shadow-2xl">
-        <h2 className="text-center text-xl font-bold text-foreground">SockGate Proxy Shop</h2>
-        <h1 className="mt-3 text-center text-2xl font-bold text-foreground">
-          {mode === "login" ? "Login" : "Register"}
-        </h1>
-
-        <div className="mt-8 border-l-4 border-note-accent bg-note p-4">
-          <div className="flex items-center gap-2 text-lg font-bold text-note-accent">
-            <AlertTriangle className="h-5 w-5" /> Note
+      <div className="w-full max-w-[440px]">
+        <div className="mb-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/30">
+            <Globe className="h-7 w-7 text-primary-foreground" />
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">
-            We sell SOCKS5 proxies only. Our official domain:
-          </p>
-          <div className="mt-3 space-y-3">
-            {domains.map((d) => (
-                <span key={d} className="inline-block max-w-full break-all border border-note-accent/50 bg-note-accent/20 px-2 py-1 text-xs text-primary-foreground">
-                {d}
-              </span>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Any other domain is not ours. Use proxies only for lawful purposes.
-          </p>
+          <h1 className="mt-4 text-2xl font-bold tracking-tight">DeepShop</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Premium SOCKS5 proxies</p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-          {["Username", "Password", ...(mode === "register" ? ["Confirm password"] : [])].map((l) => (
-            <label key={l} className="block text-sm text-foreground/80">
-              {l} <span className="text-destructive">*</span>
-              <input
-                required
-                name={l}
-                type={l.toLowerCase().includes("password") ? "password" : "text"}
-                className="mt-2 block h-10 w-full rounded-md border border-input bg-background px-3 outline-none focus:ring-2 focus:ring-primary"
-              />
-            </label>
-          ))}
-          {mode === "login" && (
-            <label className="flex items-center gap-3 text-sm text-foreground/80">
-              <input type="checkbox" className="h-4 w-4" /> Remember me
-            </label>
-          )}
-          <button disabled={busy} className="h-9 w-full rounded-md bg-primary disabled:opacity-60 text-sm text-primary-foreground hover:opacity-90">
-            {mode === "login" ? "Login" : "Create account"}
-          </button>
-        </form>
+        <div className="rounded-2xl border border-border bg-card/80 p-7 shadow-2xl backdrop-blur">
+          <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
+            {(["login", "register"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setMode(m)}
+                className={`h-9 rounded-md text-sm font-medium transition ${mode === m ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {m === "login" ? "Sign in" : "Create account"}
+              </button>
+            ))}
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setMode(mode === "login" ? "register" : "login")}
-          className="mt-8 text-primary hover:underline"
-        >
-          {mode === "login" ? "Don't have an account?" : "Already have an account?"}
-        </button>
+          <div className="mt-6 rounded-lg border-l-4 border-note-accent bg-note p-4">
+            <div className="flex items-center gap-2 font-bold text-note-accent">
+              <AlertTriangle className="h-4 w-4" /> Note
+            </div>
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              We sell SOCKS5 proxies only. Our one and only official domain:
+            </p>
+            <span className="mt-2.5 inline-block max-w-full break-all rounded border border-note-accent/50 bg-note-accent/20 px-2.5 py-1 font-mono text-xs text-foreground">
+              {officialDomain}
+            </span>
+            <p className="mt-2.5 text-xs text-muted-foreground">
+              Any other domain is fake. Use proxies only for lawful purposes.
+            </p>
+          </div>
+
+          <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+            <Field label="Username" name="Username" icon={User} autoComplete="username" />
+            <Field label="Password" name="Password" type="password" icon={Lock} autoComplete={mode === "login" ? "current-password" : "new-password"} />
+            {mode === "register" && (
+              <Field label="Confirm password" name="Confirm password" type="password" icon={Lock} autoComplete="new-password" />
+            )}
+            {mode === "login" && (
+              <label className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                <input type="checkbox" className="h-4 w-4 rounded accent-[var(--primary)]" /> Remember me
+              </label>
+            )}
+            <button
+              disabled={busy}
+              className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition hover:brightness-110 disabled:opacity-60"
+            >
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+              {mode === "login" ? "Sign in" : "Create account"}
+            </button>
+          </form>
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3">
+          {perks.map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center gap-2 rounded-lg border border-border bg-card/50 px-3 py-2.5 text-xs text-muted-foreground">
+              <Icon className="h-4 w-4 shrink-0 text-primary" /> {text}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

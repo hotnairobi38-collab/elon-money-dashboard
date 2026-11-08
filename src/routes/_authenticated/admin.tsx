@@ -9,9 +9,9 @@ import { DomainEditor } from "@/components/DomainEditor";
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Admin — SockGate Proxy" },
+      { title: "Admin — DeepShop" },
       { name: "description", content: "Review customer crypto deposits." },
-      { property: "og:title", content: "Admin — SockGate Proxy" },
+      { property: "og:title", content: "Admin — DeepShop" },
       { property: "og:description", content: "Review customer crypto deposits." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -13,9 +13,9 @@ import { addToCart, cartTotal, restoreCart } from "@/lib/cart";
 export const Route = createFileRoute("/_authenticated/shop")({
   head: () => ({
     meta: [
-      { title: "Socks5 Shop — SockGate Proxy" },
+      { title: "Socks5 Shop — DeepShop" },
       { name: "description", content: "Search and buy SOCKS5 proxies by country, city, ISP and type." },
-      { property: "og:title", content: "Socks5 Shop — SockGate Proxy" },
+      { property: "og:title", content: "Socks5 Shop — DeepShop" },
       { property: "og:description", content: "Search and buy SOCKS5 proxies." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
