@@ -69,6 +69,8 @@ export type Database = {
         Row: {
           checkout_id: string | null
           created_at: string
+          delivered_at: string | null
+          delivery_details: string | null
           id: string
           price: number
           proxy: Json
@@ -78,6 +80,8 @@ export type Database = {
         Insert: {
           checkout_id?: string | null
           created_at?: string
+          delivered_at?: string | null
+          delivery_details?: string | null
           id?: string
           price: number
           proxy: Json
@@ -87,6 +91,8 @@ export type Database = {
         Update: {
           checkout_id?: string | null
           created_at?: string
+          delivered_at?: string | null
+          delivery_details?: string | null
           id?: string
           price?: number
           proxy?: Json
@@ -186,6 +192,10 @@ export type Database = {
       checkout_cart: {
         Args: { _items: Json; _request_id: string }
         Returns: string
+      }
+      deliver_order: {
+        Args: { _details: string; _id: string }
+        Returns: undefined
       }
       has_role: {
         Args: {

@@ -15,8 +15,8 @@ export function MyOrders() {
         <td className="whitespace-nowrap px-3 py-3">{new Date(o.created_at).toLocaleString()}</td>
         <td className="px-3 font-mono">{p.ip}</td><td className="px-3">{p.city}, {p.region}, {p.country}</td>
         <td className="px-3">${Number(o.price).toFixed(2)}</td>
-        <td className="px-3">{o.status === "pending" ? "Waiting for verification" : o.status === "rejected" ? "Rejected (refunded)" : "Approved"}</td>
-        <td className="px-3 text-muted-foreground">{o.status === "approved" ? "Sample only — no live credentials" : o.status === "rejected" ? "Not delivered" : "Pending approval"}</td>
+        <td className="px-3">{o.status === "pending" ? "Waiting for verification" : o.status === "rejected" ? "Rejected (refunded)" : o.delivered_at ? "Delivered" : "Awaiting delivery"}</td>
+        <td className="px-3 py-3">{o.status === "approved" && o.delivery_details ? <div className="min-w-48 max-w-sm"><pre className="whitespace-pre-wrap break-all font-mono text-xs">{o.delivery_details}</pre>{o.delivered_at && <p className="mt-2 text-xs text-muted-foreground">Delivered {new Date(o.delivered_at).toLocaleString()}</p>}</div> : <span className="text-muted-foreground">{o.status === "rejected" ? "Not delivered" : "Pending delivery"}</span>}</td>
       </tr>; })}</tbody>
     </table>
   </div>;
