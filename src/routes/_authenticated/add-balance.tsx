@@ -10,10 +10,10 @@ import { meQuery, walletsQuery } from "@/lib/queries";
 export const Route = createFileRoute("/_authenticated/add-balance")({
   head: () => ({
     meta: [
-      { title: "Topup — SockGate Proxy" },
-      { name: "description", content: "Top up your SockGate balance with crypto." },
-      { property: "og:title", content: "Topup — SockGate Proxy" },
-      { property: "og:description", content: "Top up your SockGate balance with crypto." },
+      { title: "Topup — DeepShop" },
+      { name: "description", content: "Top up your DeepShop balance with crypto." },
+      { property: "og:title", content: "Topup — DeepShop" },
+      { property: "og:description", content: "Top up your DeepShop balance with crypto." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

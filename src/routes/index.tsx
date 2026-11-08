@@ -10,9 +10,9 @@ import { domainQuery } from "@/lib/queries";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SockGate Proxy — Login" },
-      { name: "description", content: "Sign in to SockGate to buy fast, reliable SOCKS5 proxies." },
-      { property: "og:title", content: "SockGate Proxy — Login" },
+      { title: "DeepShop — Login" },
+      { name: "description", content: "Sign in to DeepShop to buy fast, reliable SOCKS5 proxies." },
+      { property: "og:title", content: "DeepShop — Login" },
       { property: "og:description", content: "Fast, reliable SOCKS5 proxies. Sign in to your account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -58,7 +58,7 @@ function Index() {
       style={{ backgroundImage: "radial-gradient(ellipse at top, var(--glow), transparent 60%)" }}
     >
       <div className="w-full max-w-[430px] rounded-xl border border-border bg-card p-8 shadow-2xl">
-        <h2 className="text-center text-xl font-bold text-foreground">SockGate Proxy Shop</h2>
+        <h2 className="text-center text-xl font-bold text-foreground">DeepShop Shop</h2>
         <h1 className="mt-3 text-center text-2xl font-bold text-foreground">
           {mode === "login" ? "Login" : "Register"}
         </h1>

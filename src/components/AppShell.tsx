@@ -34,7 +34,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center border-b border-border bg-sidebar">
         <div className="flex w-56 items-center gap-3 px-4 md:border-r md:border-border md:h-full">
           <button onClick={() => setOpen(!open)} className="text-primary md:hidden" aria-label="Menu"><Menu className="h-5 w-5" /></button>
-          <Link to="/dashboard" className="text-lg font-bold">SockGate Shop</Link>
+          <Link to="/dashboard" className="text-lg font-bold">DeepShop Shop</Link>
         </div>
         <div className="ml-auto flex items-center gap-3 px-4">
           <Link to="/add-balance" className="flex items-center gap-2 rounded-full bg-background px-3 py-1 font-medium text-success">
@@ -76,7 +76,7 @@ export function NoteBox() {
   return (
     <div className="border-l-4 border-note-accent bg-note-accent/10 p-4 text-sm">
       <p className="text-lg font-medium text-note-accent">⚠ Note</p>
-      <p className="mt-1">SockGate only uses this domain:</p>
+      <p className="mt-1">DeepShop only uses this domain:</p>
       <span className="mt-3 inline-block max-w-full break-all rounded border border-note-accent/50 bg-note-accent/20 px-3 py-1.5">{domain ?? "https://deepshop.space/"}</span>
       <p className="mt-3">All other domains are fake. Use proxies only for lawful purposes.</p>
     </div>
