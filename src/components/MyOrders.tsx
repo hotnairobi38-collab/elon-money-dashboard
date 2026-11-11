@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { meQuery, ordersQuery } from "@/lib/queries";
 import type { Proxy } from "@/lib/mock-proxies";
 
-export function MyOrders({ highlight }: { highlight?: string } = {}) {
+export function MyOrders({ highlight }: { highlight?: string | undefined } = {}) {
   const { data } = useSuspenseQuery(ordersQuery);
   const { data: me } = useSuspenseQuery(meQuery);
   const mine = data.filter((o) => o.user_id === me.id);
