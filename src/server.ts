@@ -6,8 +6,8 @@ import { renderErrorPage } from "./lib/error-page";
 // Hosts without runtime env vars (e.g. a Vercel clone) still get the public backend
 // address/key baked in at build time from the committed .env.
 if (typeof process !== "undefined" && process.env) {
-  process.env.SUPABASE_URL ||= import.meta.env.VITE_SUPABASE_URL;
-  process.env.SUPABASE_PUBLISHABLE_KEY ||= import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  process.env['SUPABASE_URL'] ||= import.meta.env['VITE_SUPABASE_URL'];
+  process.env['SUPABASE_PUBLISHABLE_KEY'] ||= import.meta.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
 }
 
 type ServerEntry = {
