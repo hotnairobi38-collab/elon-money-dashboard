@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
-import { Home, Globe, Wallet, History, ShieldCheck, Plus, Menu, LogOut, Package } from "lucide-react";
+import { Home, Globe, Wallet, History, ShieldCheck, Plus, Menu, LogOut, Package, ShoppingCart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { meQuery, domainQuery } from "@/lib/queries";
+import { useCart } from "@/lib/use-cart";
 
 const item = "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-sidebar-foreground/90 hover:bg-sidebar-accent";
 const active = { className: "bg-primary text-primary-foreground hover:bg-primary" };
@@ -20,6 +21,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 export function AppShell({ children }: { children: ReactNode }) {
   const { data: me } = useQuery(meQuery);
   const [open, setOpen] = useState(false);
+  const cartCount = useCart(me?.id).items.length;
   const navigate = useNavigate();
   const qc = useQueryClient();
   async function signOut() {
@@ -34,9 +36,13 @@ export function AppShell({ children }: { children: ReactNode }) {
       <header className="fixed inset-x-0 top-0 z-30 flex h-14 items-center border-b border-border bg-sidebar">
         <div className="flex w-56 items-center gap-3 px-4 md:border-r md:border-border md:h-full">
           <button onClick={() => setOpen(!open)} className="text-primary md:hidden" aria-label="Menu"><Menu className="h-5 w-5" /></button>
-          <Link to="/dashboard" className="text-lg font-bold">DeepShop Shop</Link>
+          <Link to="/dashboard" className="text-lg font-bold">DeepShop</Link>
         </div>
         <div className="ml-auto flex items-center gap-3 px-4">
+          <Link to="/cart" aria-label={`Cart, ${cartCount} items`} className="relative flex h-9 w-9 items-center justify-center rounded-full bg-background text-foreground hover:text-primary">
+            <ShoppingCart className="h-4 w-4" />
+            {cartCount > 0 && <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold text-primary-foreground">{cartCount}</span>}
+          </Link>
           <Link to="/add-balance" className="flex items-center gap-2 rounded-full bg-background px-3 py-1 font-medium text-success">
             ${(me?.balance ?? 0).toFixed(2)} <Plus className="h-4 w-4" />
           </Link>
@@ -52,6 +58,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <Section title="Purchase Socks5">
           <Link to="/shop" className={item} activeProps={active}><Globe className="h-4 w-4" />Socks5 Shop</Link>
+          <Link to="/cart" className={item} activeProps={active}><ShoppingCart className="h-4 w-4" />Cart{cartCount > 0 && <span className="ml-auto rounded-full bg-primary/20 px-2 text-xs">{cartCount}</span>}</Link>
           <Link to="/orders" className={item} activeProps={active}><Package className="h-4 w-4" />My Orders</Link>
         </Section>
         <Section title="Account Management">
