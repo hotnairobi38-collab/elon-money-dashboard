@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/orders")({
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
   validateSearch: (s: Record<string, unknown>): { placed?: string } =>
-    typeof s.placed === "string" ? { placed: s.placed } : {},
+    typeof s['placed'] === "string" ? { placed: s['placed'] } : {},
   loader: async ({ context }) => { await Promise.all([context.queryClient.ensureQueryData(meQuery), context.queryClient.ensureQueryData(ordersQuery)]); },
   component: OrdersPage,
 });
