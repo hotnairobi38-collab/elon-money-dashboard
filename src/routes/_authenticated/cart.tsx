@@ -42,8 +42,8 @@ function CartPage() {
       if (error) throw error;
       cart.clear();
       await qc.invalidateQueries();
-      toast.success("Checkout complete — your orders are waiting for delivery");
-      await navigate({ to: "/orders" });
+      toast.success("Payment complete — your order is placed");
+      await navigate({ to: "/orders", search: { placed: requestId } });
     } catch (error) {
       toast.error((error as { message?: string })?.message ?? "Checkout failed");
     } finally { setBusy(false); }
