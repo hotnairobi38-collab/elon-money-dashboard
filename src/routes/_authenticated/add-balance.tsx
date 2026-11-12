@@ -116,12 +116,7 @@ function Topup() {
               Send {currency} to this address
             </p>
 
-            <div className="rounded-lg border border-success/30 bg-success/10 p-3 text-sm text-success-foreground">
-              <p>Send any amount above the minimum, then submit the transaction ID below. Money is credited after confirmation.</p>
-              <p className="mt-1 font-bold">Only send {currency} to this address. Do not send below the minimum!</p>
-            </div>
-
-            <div className="mt-4 grid gap-4 md:grid-cols-[1fr_auto]">
+            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
               <div className="space-y-4">
                 <button
                   onClick={copyAddress}
