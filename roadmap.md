@@ -1,5 +1,5 @@
 # Shop updates
-- [ ] Connect a resale-capable provider: DataImpulse shortlisted; blocked on 24-hour product clarification and approved, funded reseller account
+- [ ] Connect a resale-capable provider for the same IP throughout 24 hours: blocked on verified daily reseller terms and provider account authorization; DataImpulse rotating/mobile rejected for this requirement
 - [ ] Replace sample inventory and wire paid provisioning after provider access is verified; preserve manual deposit approval
 - [ ] Admin-entered delivery details and customer readback
 - [ ] Delivery permission tests and signed-in verification
